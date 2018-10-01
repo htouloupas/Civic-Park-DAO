@@ -3,10 +3,9 @@
   
     window.onload = function() {
         // get row clicked in previous page from sessionStorage
-        var index = this.window.city_id;
+        var index = this.window.city_id-1;
         // get JSON obj data
         var dataJson = getData();
-        console.log(index);
 
         // update the contract status and details fields html
         document.getElementById("state").innerText  += "   " + "Created"; //hard coded for now, will implement from azure
@@ -23,13 +22,7 @@
         document.getElementById("contributors").innerText += "   " + dataJson.contracts[index].contractProperties[9].value ;
         document.getElementById("manager").innerText += "   " + dataJson.contracts[index].contractProperties[8].value ;
     }
- 
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-               .register('./service-worker.js')
-               .then(function() { console.log('Service Worker Registered'); });
-    }
   })();
 
   
