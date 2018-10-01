@@ -1,0 +1,4 @@
+--find-links wheelhouse
+django
+django-tables2
+mlxtend
