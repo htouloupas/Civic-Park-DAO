@@ -3,6 +3,7 @@ from .models import Campaign, AprioriResult
 from .tables import CampaignTable, AprioriResultTable
 from django_tables2 import RequestConfig
 from .functions.generic_functions import get_apriori_result, get_conn_to_db
+from urllib.parse import unquote
 
 
 def browse_campaigns(request):
@@ -38,6 +39,7 @@ def browse_campaigns(request):
 
 def filtered_campaigns(request, categories):
 
+    categories = unquote(categories)
     categories_list = categories.replace(" ", "").split(",")
     sql = "SELECT * FROM main.civicpark_campaign WHERE "
     for category in categories_list:
