@@ -41,7 +41,7 @@ def filtered_campaigns(request, categories):
     categories_list = categories.replace(" ", "").split(",")
     sql = "SELECT * FROM main.civicpark_campaign WHERE "
     for category in categories_list:
-        sql += f"{category}=1 AND"
+        sql += f"{category}=1 AND "
     sql = sql[:-4] + ";"
 
     table = CampaignTable(Campaign.objects.raw(sql))
