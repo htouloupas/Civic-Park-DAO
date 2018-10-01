@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% block content %}
+    <nav>
+      <div class="nav-wrapper blue darken-4" onclick="location.href='{% url 'index' %}'">
+        <a href="#" class="brand-logo center">Campaign Details</a>
+      </div>
+    </nav>
+
+    <main class="container">
+      <div class="row">
+        <div class="col s12">
+
+            <!-- Back to Campaign list page -->
+            <div>
+                <button class="waves-effect waves-light btn-large custom-btn" type="button" onclick="location.href='{% url 'campaign_table' %}'">
+                    Campaigns List
+                </button>
+            </div>
+            
+            <!-- Single campaign table -->
+            <div class="row">
+               {% render_table single_campaign_table %}
+            </div>
+
+             <!-- Back to Campaign list page -->
+             <div >
+              <button class="waves-effect waves-light  custom-btn-small" type="button" onclick="location.href='https://cpdaoprototypea1-fyh7yr.azurewebsites.net/'">
+                  Take Action (Link to DAO Admin site)
+              </button>
+            </div>
+
+            <!-- Campaign Status -->
+            <div >
+              <p class="textheader">Status</p>
+              <p class="textlabel" id="state">State:</p>
+              <p class="textlabel" id="date">Created Date:</p>
+            </div>
+
+            <!-- Campaign Details -->
+            <div >
+                <p class="textheader">Details</p>
+                <p class="textlabel" id="contractid">Contract ID: &nbsp;</p>
+                <p class="textlabel" id="address">Contract Ledger Address: &nbsp;</p>
+                <p class="textlabel" id="name">Campaign Name: &nbsp;</p>
+                <p class="textlabel" id="org">Organization: &nbsp;</p>
+                <p class="textlabel" id="descr">Campaign Description: &nbsp;</p>
+                <p class="textlabel" id="city">City: &nbsp;</p>
+                <p class="textlabel" id="mincontrib">Minimum Contribution: &nbsp;</p>
+                <p class="textlabel" id="goal">Funding Goal: &nbsp;</p>
+                <p class="textlabel" id="funds">Current Funds: &nbsp;</p>
+                <p class="textlabel" id="contributors">Contributors: &nbsp;</p>
+                <p class="textlabel" id="manager">Manager Ledger Address: &nbsp;</p>
+            </div>
+
+            <!-- Campaign Activity -->
+            <div class="row">
+                <p class="textunavail">Activity (Coming Soon)</p>
+            </div>
+        
+        </div>
+      </div>
+    </main>
+
+    <script type="text/javascript" src="{% static 'scripts/camp.js' %}"></script>
+    <script type="text/javascript">var city_id={{ city_id }};</script>
+{% endblock %}
