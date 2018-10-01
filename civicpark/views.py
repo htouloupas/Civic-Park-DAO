@@ -38,7 +38,7 @@ def browse_campaigns(request):
 
 def filtered_campaigns(request, categories):
 
-    categories_list = categories.split(",")
+    categories_list = categories.replace(" ", "").split(",")
     sql = "SELECT * FROM main.civicpark_campaign WHERE "
     for category in categories_list:
         sql += f"{category}=1 AND"
