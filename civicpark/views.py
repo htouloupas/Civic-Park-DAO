@@ -14,6 +14,7 @@ logging.basicConfig(filename='logdjango.txt',
                             datefmt='%H:%M:%S',
                             level=logging.DEBUG)
 
+logger = logging.getLogger("logger")
 
 def browse_campaigns(request):
     if request.method == 'POST':
@@ -76,7 +77,7 @@ def campaign_info(request, campaign_name):
         '5822d520-9b8c-4efc-97a4-036c843529d2',
         'cGx1IAEk/uFj/hG7eOGKEdtm7hDxzYnFGOFaIEeSNR4='
     )
-    logging.DEBUG(token_response)
+    logger.debug(token_response)
     print(token_response)
     #SESSION.headers.update({'Authorization': "Bearer" + token_response['accessToken']})
     #print(SESSION.get("https://cpdaoprototypea1-fyh7yr-api.azurewebsites.net/api/v1/contracts"))
@@ -85,9 +86,9 @@ def campaign_info(request, campaign_name):
         "https://cpdaoprototypea1-fyh7yr-api.azurewebsites.net/api/v1/contracts?top=50&workflowId=5",
         headers={"Authorization": "Bearer " + token_response['accessToken']}
     )
-    logging.DEBUG(r.raw)
-    logging.DEBUG(r.json())
-    logging.DEBUG(r.status_code)
+    logger.debug(r.raw)
+    logger.debug(r.json())
+    logger.debug(r.status_code)
 
     city_id = Campaign.objects.filter(Name_Of_Community=campaign_name).values('city_id').get()['city_id']
 
