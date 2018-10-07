@@ -20,7 +20,6 @@ class CampaignTable(tables.Table):
     class Meta:
         exclude = ('id', )
         show_footer = False
-        #model = models.Campaign
         attrs = {
             'class': 'rounded table-hover'
         }
@@ -37,7 +36,6 @@ class AprioriResultTable(tables.Table):
     class Meta:
         exclude = ('id', )
         show_footer = False
-        # model = models.AprioriResult
         attrs = {
             'class': 'rounded table-hover'
         }  # Change that for <table class="mytable"/> Change.
@@ -48,7 +46,6 @@ class TableAfterAprioriFiltering(tables.Table):
     class Meta:
         exclude = ('id', )
         show_footer = False
-        model = models.Campaign
         attrs = {
             'class': 'rounded table-hover'
         }  # Change that for <table class="mytable"/> Change.

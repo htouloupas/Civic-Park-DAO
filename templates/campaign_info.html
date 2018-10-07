@@ -34,24 +34,24 @@
             <!-- Campaign Status -->
             <div >
               <p class="textheader">Status</p>
-              <p class="textlabel" id="state">State:</p>
-              <p class="textlabel" id="date">Created Date:</p>
+              <p class="textlabel" id="state">State: Created</p>
+              <p class="textlabel" id="date">Created Date: {{ campaign_information.timestamp }}</p>
             </div>
 
             <!-- Campaign Details -->
             <div >
                 <p class="textheader">Details</p>
-                <p class="textlabel" id="contractid">Contract ID: &nbsp;</p>
-                <p class="textlabel" id="address">Contract Ledger Address: &nbsp;</p>
-                <p class="textlabel" id="name">Campaign Name: &nbsp;</p>
-                <p class="textlabel" id="org">Organization: &nbsp;</p>
-                <p class="textlabel" id="descr">Campaign Description: &nbsp;</p>
-                <p class="textlabel" id="city">City: &nbsp;</p>
-                <p class="textlabel" id="mincontrib">Minimum Contribution: &nbsp;</p>
-                <p class="textlabel" id="goal">Funding Goal: &nbsp;</p>
-                <p class="textlabel" id="funds">Current Funds: &nbsp;</p>
-                <p class="textlabel" id="contributors">Contributors: &nbsp;</p>
-                <p class="textlabel" id="manager">Manager Ledger Address: &nbsp;</p>
+                <p class="textlabel" id="contractid">Contract ID: {{ campaign_information.id }}</p>
+                <p class="textlabel" id="address">Contract Ledger Address: {{ campaign_information.ledgerIdentifier }}</p>
+                <p class="textlabel" id="name">Campaign Name: {{ campaign_information.contractProperties.1.value }}</p>
+                <p class="textlabel" id="org">Organization: {{ campaign_information.contractProperties.4.value }}</p>
+                <p class="textlabel" id="descr">Campaign Description: {{ campaign_information.contractProperties.2.value }}</p>
+                <p class="textlabel" id="city">City: {{ campaign_information.contractProperties.3.value }}</p>
+                <p class="textlabel" id="mincontrib">Minimum Contribution: {{ campaign_information.contractProperties.5.value }}</p>
+                <p class="textlabel" id="goal">Funding Goal: {{ campaign_information.contractProperties.6.value }}</p>
+                <p class="textlabel" id="funds">Current Funds: {{ campaign_information.contractProperties.7.value }}</p>
+                <p class="textlabel" id="contributors">Contributors: {{ campaign_information.contractProperties.9.value }}</p>
+                <p class="textlabel" id="manager">Manager Ledger Address: {{ campaign_information.contractProperties.8.value }}</p>
             </div>
 
             <!-- Campaign Activity -->
@@ -62,7 +62,4 @@
         </div>
       </div>
     </main>
-
-    <script type="text/javascript" src="{% static 'scripts/camp.js' %}"></script>
-    <script type="text/javascript">var city_id={{ city_id }};</script>
 {% endblock %}

@@ -1,64 +1,64 @@
 from django.shortcuts import render
-from .models import Campaign, AprioriResult
 from .tables import CampaignTable, AprioriResultTable
 from django_tables2 import RequestConfig
-from .functions.generic_functions import get_apriori_result, get_conn_to_db
+from .functions.generic_functions import get_apriori_result, get_campaign_data_from_response, get_json_from_api
 from urllib.parse import unquote
-import adal
-import requests
-import logging
 
-logging.basicConfig(filename='logdjango.txt',
-                            filemode='a',
-                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                            datefmt='%H:%M:%S',
-                            level=logging.DEBUG)
-
-logger = logging.getLogger("logger")
 
 def browse_campaigns(request):
+    response = get_campaign_data_from_response()
     if request.method == 'POST':
         try:
             supp = float(request.POST.get('aprioriSupport'))
-            conn = get_conn_to_db()
-            cur = conn.cursor()
-            cur.execute("DROP TABLE IF EXISTS civicpark_aprioriresult;")
-            conn.commit()
-            sql_query = """
-                                SELECT FAMobility, FASafety, SAEconomic, SARoadsTrans, 
-                                TArtificialIntelligence,  TAutonomousVehicles, TGeospatial, TIoT, TSensors
-                                FROM civicpark_campaign
-                            """
 
-            get_apriori_result(sql_query, conn, supp).to_sql('civicpark_aprioriresult', con=conn, index_label='id')
-            conn.close()
+            result = get_apriori_result(response, supp)
 
-            table = AprioriResultTable(AprioriResult.objects.all())
+            table = AprioriResultTable(result)
             RequestConfig(request, paginate=False).configure(table)
             return render(request, 'browse_campaigns.html', {'table': table})
         except ValueError:
-            table = CampaignTable(Campaign.objects.all())
+            table = CampaignTable(response)
             RequestConfig(request, paginate=False).configure(table)
             return render(request, 'browse_campaigns.html', {'table': table})
 
     elif request.method == 'GET':
-        table = CampaignTable(Campaign.objects.all())
+        table = CampaignTable(response)
         RequestConfig(request, paginate=False).configure(table)
         return render(request, 'browse_campaigns.html', {'table': table})
 
 
 def filtered_campaigns(request, categories):
+    campaign_data = get_campaign_data_from_response()
+    if request.method == 'POST':
+        try:
+            supp = float(request.POST.get('aprioriSupport'))
 
-    categories = unquote(categories)
-    categories_list = categories.replace(" ", "").split(",")
-    sql = "SELECT * FROM main.civicpark_campaign WHERE "
-    for category in categories_list:
-        sql += f"{category}=1 AND "
-    sql = sql[:-4] + ";"
+            result = get_apriori_result(campaign_data, supp)
 
-    table = CampaignTable(Campaign.objects.raw(sql))
-    RequestConfig(request, paginate=False).configure(table)
-    return render(request, 'browse_campaigns.html', {'table': table})
+            table = AprioriResultTable(result)
+            RequestConfig(request, paginate=False).configure(table)
+            return render(request, 'browse_campaigns.html', {'table': table})
+        except ValueError:
+            table = CampaignTable(response)
+            RequestConfig(request, paginate=False).configure(table)
+            return render(request, 'browse_campaigns.html', {'table': table})
+
+    else:
+        categories = unquote(categories)
+        categories_list = categories.replace(" ", "").split(",")
+
+        data = []
+        for campaign in campaign_data:
+            count = 0
+            for category in categories_list:
+                if campaign[category] == 1:
+                    count += 1
+                if count == len(categories_list):
+                    data.append(campaign)
+
+        table = CampaignTable(data)
+        RequestConfig(request, paginate=False).configure(table)
+        return render(request, 'browse_campaigns.html', {'table': table})
 
 
 def index(request):
@@ -67,32 +67,20 @@ def index(request):
 
 def campaign_info(request, campaign_name):
 
-    authority_url = 'https://login.microsoftonline.com/mystudiomoutlook.onmicrosoft.com'
-    auth_context = adal.AuthenticationContext(authority_url, validate_authority=False)
+    ind = 0
+    resulting_campaign = 0
+    campaign_data = get_campaign_data_from_response()
+    for inde, campaign in enumerate(campaign_data):
+        if campaign['Name_Of_Community'] in campaign_name:
+            resulting_campaign = [campaign]
+            ind = inde
+            break
 
-    #SESSION = requests.Session()
+    data_json = get_json_from_api()
 
-    token_response = auth_context.acquire_token_with_client_credentials(
-        '319d2ec7-6807-4ce1-874b-fecaabad5e65',
-        '5822d520-9b8c-4efc-97a4-036c843529d2',
-        'cGx1IAEk/uFj/hG7eOGKEdtm7hDxzYnFGOFaIEeSNR4='
-    )
-    logger.debug(token_response)
-    print(token_response)
-    #SESSION.headers.update({'Authorization': "Bearer" + token_response['accessToken']})
-    #print(SESSION.get("https://cpdaoprototypea1-fyh7yr-api.azurewebsites.net/api/v1/contracts"))
+    campaign_information = data_json['contracts'][ind]
 
-    r = requests.get(
-        "https://cpdaoprototypea1-fyh7yr-api.azurewebsites.net/api/v1/contracts?top=50&workflowId=5",
-        headers={"Authorization": "Bearer " + token_response['accessToken']}
-    )
-    logger.debug(r.raw)
-    logger.debug(r.json())
-    logger.debug(r.status_code)
-
-    city_id = Campaign.objects.filter(Name_Of_Community=campaign_name).values('city_id').get()['city_id']
-
-    single_campaign_table = CampaignTable(Campaign.objects.filter(Name_Of_Community=campaign_name))
+    single_campaign_table = CampaignTable(resulting_campaign)
     RequestConfig(request, paginate=False).configure(single_campaign_table)
     return render(request, 'campaign_info.html', {'single_campaign_table': single_campaign_table,
-                                                  'city_id': city_id})
+                                                  'campaign_information': campaign_information})
