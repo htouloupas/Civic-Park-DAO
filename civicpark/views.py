@@ -66,7 +66,7 @@ def index(request):
 
 
 def campaign_info(request, campaign_name):
-
+    campaign_name = unquote(campaign_name)
     ind = 0
     resulting_campaign = 0
     campaign_data = get_campaign_data_from_response()
