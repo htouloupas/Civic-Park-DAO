@@ -39,7 +39,7 @@ def filtered_campaigns(request, categories):
             RequestConfig(request, paginate=False).configure(table)
             return render(request, 'browse_campaigns.html', {'table': table})
         except ValueError:
-            table = CampaignTable(response)
+            table = CampaignTable(campaign_data)
             RequestConfig(request, paginate=False).configure(table)
             return render(request, 'browse_campaigns.html', {'table': table})
 
